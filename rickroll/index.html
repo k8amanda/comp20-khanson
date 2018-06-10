@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Rick Roll</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+	
+<h1 id="title">Rick Roll</h1>
+
+<video src="https://www.cs.tufts.edu/comp/20/rickroll.mp4" id="rickroll" controls></video>
+<div id="lyrics"></div>
+
+<script>
+	var vid = document.getElementById("rickroll");
+	var verse;
+
+	vid.addEventListener("timeupdate", lyricFunc);
+
+	function lyricFunc()
+	{
+		if (vid.currentTime < 18)
+		{
+			verse = "";
+		}
+		else if (vid.currentTime >= 18 && vid.currentTime < 34)
+		{
+			verse = "We're no strangers to love.\n\
+			You know the rules and so do I.\n\
+			A full commitment's what I'm thinking of.\n\
+			You wouldn't get this from any other guy.";
+		}
+		else if ((vid.currentTime >= 34 && vid.currentTime < 42) || (vid.currentTime >= 153 && vid.currentTime < 161))
+		{
+			verse = "I just wanna tell you how I'm feeling.\n\
+			Gotta make you understand.";
+		}
+		else if ((vid.currentTime >= 42 && vid.currentTime < 59) || (vid.currentTime >= 84 && vid.currentTime < 118) || (vid.currentTime >= 161 && vid.currentTime < 212))
+		{
+			verse = "Never gonna give you up.\n\
+			Never gonna let you down.\n\
+			Never gonna run around and desert you.\n\
+			Never gonna make you cry.\n\
+			Never gonna say goodbye.\n\
+			Never gonna tell a lie and hurt you.";
+		}
+		else if ((vid.currentTime >= 60 && vid.currentTime < 77) || (vid.currentTime >= 136 && vid.currentTime < 153))
+		{
+			verse = "We've known each other for so long.\n\
+			Your heart's been aching, but\n\
+			you're too shy to say it\n\
+			Inside, we both know what's been going on.\n\
+			We know the game and we're gonna play it.";
+		}
+		else if (vid.currentTime >= 77 && vid.currentTime < 84)
+		{
+			verse = "And if you ask me how I'm feeling.\n\
+			Don't tell me you're too blind to see.";
+		}
+		else if (vid.currentTime >= 119 && vid.currentTime < 135)
+		{
+			verse = "(Ooh, give you up)\n\
+			(Ooh, give you up)\n\
+			Never gonna give, never gonna give\n\
+			(Give you up)\n\
+			Never gonna give, never gonna give\n\
+			(Give you up)";
+		}
+		else
+		{
+			verse = "";
+		}
+		document.getElementById("lyrics").innerHTML = verse;
+	}
+
+
+</script>
+</body>
+</html>
