@@ -1,1 +1,14 @@
-/* Your CSS here... */
+h1 {
+	color: #523874;
+	font-weight: lighter;
+	font-size: 40px;
+	font-family: Georgia, serif;
+	font-variant: small-caps;
+}
+
+#messages {
+	font-style: bold;
+	font-family: Courier New, monospace;
+	color: #6960EC;
+	font-size: 20px;
+}
