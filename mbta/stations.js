@@ -246,7 +246,7 @@ function upcomingTrainsFunc(stopId)
 				{
 					var direc = "Northbound";
 				}
-				info += "Arrival time: " + obj.data[x].attributes.arrival_time; + ", Departure time: " + obj.data[x].attributes.departure_time + ", " + direc + "<br>";
+				info += "Arrival time: " + obj.data[x].attributes.arrival_time + ", Departure time: " + obj.data[x].attributes.departure_time + ", " + direc + "<br>";
 			}
 			return info;
 		}
