@@ -1,29 +1,29 @@
 var redData1 = [
-	['Alewife', 42.395428, -71.142483],
-	['Davis', 42.39674, -71.121815],
-	['Porter Square', 42.3884, -71.11914899999999],
-	['Harvard Square', 42.373362, -71.118956],
-	['Central Square', 42.365486, -71.103802],
-	['Kendall/MIT', 42.36249079, -71.08617653],
-	['Charles/MGH', 42.361166, -71.070628],
-	['Park Street', 42.35639457, -71.0624242],
-	['Downtown Crossing', 42.355518, -71.060225],
-	['South Station', 42.352271, -71.05524200000001],
-	['Broadway', 42.342622, -71.056967],
-	['Andrew', 42.330154, -71.057655],
-	['JFK/UMass', 42.320685, -71.052391],
-	['North Quincy', 42.275275, -71.029583],
-	['Wollaston', 42.2665139, -71.0203369],
-	['Quincy Center', 42.251809, -71.005409],
-	['Quincy Adams', 42.233391, -71.007153],
-	['Braintree', 42.2078543, -71.0011385]	
+	['Alewife', 42.395428, -71.142483, 'place-alfcl'],
+	['Davis', 42.39674, -71.121815, 'place-davis'],
+	['Porter Square', 42.3884, -71.11914899999999, 'place-portr'],
+	['Harvard Square', 42.373362, -71.118956, 'place-harsq'],
+	['Central Square', 42.365486, -71.103802, 'place-cntsq'],
+	['Kendall/MIT', 42.36249079, -71.08617653, 'place-knncl'],
+	['Charles/MGH', 42.361166, -71.070628, 'place-chmnl'],
+	['Park Street', 42.35639457, -71.0624242, 'place-pktrm'],
+	['Downtown Crossing', 42.355518, -71.060225, 'place-dwnxg'],
+	['South Station', 42.352271, -71.05524200000001, 'place-sstat'],
+	['Broadway', 42.342622, -71.056967, 'place-brdwy'],
+	['Andrew', 42.330154, -71.057655, 'place-andrw'],
+	['JFK/UMass', 42.320685, -71.052391, 'place-jfk'],
+	['North Quincy', 42.275275, -71.029583, 'place-nqncy'],
+	['Wollaston', 42.2665139, -71.0203369, 'place-wlsta'],
+	['Quincy Center', 42.251809, -71.005409, 'place-qnctr'],
+	['Quincy Adams', 42.233391, -71.007153, 'place-qamnl'],
+	['Braintree', 42.2078543, -71.0011385, 'place-brntn']
 ];
 var redData2 = [
-	['JFK/UMass', 42.320685, -71.052391],
-	['Savin Hill', 42.31129, -71.053331],
-	['Fields Corner', 42.300093, -71.061667],
-	['Shawmut', 42.29312583, -71.06573796000001],
-	['Ashmont', 42.284652, -71.06448899999999]
+	['JFK/UMass', 42.320685, -71.052391, 'place-jfk'],
+	['Savin Hill', 42.31129, -71.053331, 'place-shmnl'],
+	['Fields Corner', 42.300093, -71.061667, 'place-fldcr'],
+	['Shawmut', 42.29312583, -71.06573796000001, 'place-smmnl'],
+	['Ashmont', 42.284652, -71.06448899999999, 'place-asmnl']
 ];
 var blueData = [
 	['Wonderland', 42.414246, -70.992144],
@@ -63,6 +63,14 @@ var orangeData = [
 ];
 
 var map;
+var image = 'http://www.iconhot.com/icon/png/web-control/16/red-info.png';
+var image2 = 'http://www.iconhot.com/icon/png/web-control/16/blue-info.png';
+var image3 = 'http://www.iconhot.com/icon/png/web-control/16/black-info.png';
+var pin = 'http://icons.iconarchive.com/icons/paomedia/small-n-flat/24/pin-icon.png';
+var color1 = '#FF0000';
+var color2 = '#0000FF';
+var color3 = '#FFA500';
+
 function initMap() {
   	//initialize map with center and zoom
     map = new google.maps.Map(document.getElementById('map'), {
@@ -70,25 +78,19 @@ function initMap() {
         zoom: 11.2
     });
 
-    // images (markers) and line colors
-    var image = 'http://www.iconhot.com/icon/png/web-control/16/red-info.png';
-    var image2 = 'http://www.iconhot.com/icon/png/web-control/16/blue-info.png';
-    var image3 = 'http://www.iconhot.com/icon/png/web-control/16/black-info.png';
-    var color1 = '#FF0000';
-    var color2 = '#0000FF';
-    var color3 = '#FFA500';
-        
     // call marker function
     mark(redData1, image, map);
     mark(redData2, image, map);
-    mark(blueData, image2, map);
-    mark(orangeData, image3, map);
+    //mark(blueData, image2, map);
+    //mark(orangeData, image3, map);
+    find();
+    
 
     // call line function
     line(redData1, color1, map);
     line(redData2, color1, map);
-    line(blueData, color2, map);
-    line(orangeData, color3, map);
+    //line(blueData, color2, map);
+    //line(orangeData, color3, map);
 }
 
 function mark(data, image, map)
@@ -102,8 +104,10 @@ function mark(data, image, map)
             title: data[i][0],
             icon: image
         });
+        var stop3 = data[i][3];
+        //var trainInfo = upcomingTrainsFunc(stop3);
+        openWindow(marker, stop3);
     }
-    return;
 }
 
 function line(dataSet, color, map)
@@ -122,5 +126,133 @@ function line(dataSet, color, map)
        	strokeWeight: 2
     });
     tPath.setMap(map);
-    return;
+}
+
+function find()
+{
+    if (navigator.geolocation)
+    {
+        navigator.geolocation.getCurrentPosition(getPosition);
+    }
+}
+
+function getPosition(position)
+{
+	currPos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+	var marker = new google.maps.Marker({
+	    position: currPos,
+        map: map,
+        title: "Your Location",
+        icon: pin
+    });
+    var currLat = position.coords.latitude;
+    var currLng = position.coords.longitude;
+    var contentString = findDist(currPos, currLat, currLng, redData1, redData2);
+
+    var infowindow = new google.maps.InfoWindow({
+    	content: contentString
+    });
+    marker.addListener('click', function()
+    {
+    	infowindow.open(map, marker);
+    });
+}
+
+function findDist(you, youLat, youLng, trainStops1, trainStops2)
+{
+	var first = new google.maps.LatLng(trainStops1[0][1], trainStops1[0][2]);
+	var minDist = google.maps.geometry.spherical.computeDistanceBetween(you, first);
+	minDist = minDist/1609.344;
+	for (var c = 0; c < trainStops1.length; c++)
+	{
+		var currStop = new google.maps.LatLng(trainStops1[c][1], trainStops1[c][2]);
+		var dist = google.maps.geometry.spherical.computeDistanceBetween(you, currStop);
+		dist = dist/1609.344;
+
+		if (dist < minDist)
+		{
+			minDist = dist;
+			var smallIndex = c;
+			var whichData = trainStops1;
+			var totalInfo = "The closest MBTA Red Line subway station to your location is " + trainStops1[smallIndex][0] +
+				" and it is " + minDist + " miles away.";
+		}
+	}
+
+	for (var d = 0; d < trainStops2.length; d++)
+	{
+		var currStop2 = new google.maps.LatLng(trainStops2[d][1], trainStops2[d][2]);
+		var dist2 = google.maps.geometry.spherical.computeDistanceBetween(you, currStop2);
+		dist2 = dist2/1609.344;
+
+		if (dist2 < minDist)
+		{
+			minDist = dist2;
+			smallIndex = d;
+			whichData = trainStops2;
+			totalInfo = "The closest MBTA Red Line subway station to your location is " + trainStops2[smallIndex][0] +
+				" and it is " + minDist + " miles away.";
+		}
+	}
+
+	var pathToStop = [{lat: youLat, lng: youLng},
+					  {lat: whichData[smallIndex][1], lng: whichData[smallIndex][2]}
+					 ];
+    
+    var tPath = new google.maps.Polyline({
+      	path: pathToStop,
+       	geodesic: true,
+       	strokeColor: '#50C878',
+       	strokeOpacity: 1.0,
+       	strokeWeight: 2
+    });
+    tPath.setMap(map);
+
+	return totalInfo;
+}
+
+function openWindow(marker, stopId)
+{
+	var upcomingTrains = upcomingTrainsFunc(stopId);
+	var infowindow = new google.maps.InfoWindow(
+	{
+		content: upcomingTrains
+	});
+	google.maps.event.addListener(marker, 'click', function()
+	{
+		infowindow.open(map, marker);
+	});
+}
+
+function upcomingTrainsFunc(stopId)
+{
+	var info = "";
+	var url = "https://defense-in-derpth.herokuapp.com/redline/schedule.json?stop_id=" + stopId;
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.overrideMimeType("application/json");
+	xmlhttp.onreadystatechange = function()
+	{
+		if ((this.readyState == 4) && (this.status == 200))
+		{
+			var obj = JSON.parse(this.responseText);
+			console.log(obj); // DELETE THIS LATER!!!!!!!!!!!!!!!!!!!!!
+			for (x in obj.data)
+			{
+				if (obj.data[x].attributes.direction_id == 0)
+				{
+					var direc = "Southbound";
+				}
+				else
+				{
+					var direc = "Northbound";
+				}
+				info += "Arrival time: " + obj.data[x].attributes.arrival_time; + ", Departure time: " + obj.data[x].attributes.departure_time + ", " + direc + "<br>";
+			}
+			return info;
+		}
+		//info = "direc";
+	};
+
+	xmlhttp.open("GET", url, true);
+	xmlhttp.send();
 }
