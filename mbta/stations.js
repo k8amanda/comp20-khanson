@@ -79,23 +79,24 @@ function initMap() {
     });
 
     // call marker function
+    mark(blueData, image2, map);
+    mark(orangeData, image3, map);
     mark(redData1, image, map);
     mark(redData2, image, map);
-    //mark(blueData, image2, map);
-    //mark(orangeData, image3, map);
     find();
     
 
     // call line function
+    line(blueData, color2, map);
+    line(orangeData, color3, map);
     line(redData1, color1, map);
     line(redData2, color1, map);
-    //line(blueData, color2, map);
-    //line(orangeData, color3, map);
 }
 
 function mark(data, image, map)
 {
 	// loop through each data point and place a marker
+	infowindow = new google.maps.InfoWindow();
   	for (var i = 0; i < data.length; i++)
     {
         var marker = new google.maps.Marker({
@@ -105,8 +106,12 @@ function mark(data, image, map)
             icon: image
         });
         var stop3 = data[i][3];
-        //var trainInfo = upcomingTrainsFunc(stop3);
-        openWindow(marker, stop3);
+
+        // prevents an infowindow from opening for blue and orange lines
+        if (stop3 != null)
+        {
+            openWindow(marker, stop3);
+        }
     }
 }
 
@@ -213,46 +218,50 @@ function findDist(you, youLat, youLng, trainStops1, trainStops2)
 
 function openWindow(marker, stopId)
 {
-	var upcomingTrains = upcomingTrainsFunc(stopId);
-	var infowindow = new google.maps.InfoWindow(
-	{
-		content: upcomingTrains
-	});
 	google.maps.event.addListener(marker, 'click', function()
 	{
+		infowindow.setContent(upcomingTrainsFunc(stopId));
 		infowindow.open(map, marker);
 	});
+
 }
 
+var info;
 function upcomingTrainsFunc(stopId)
 {
-	var info = "";
 	var url = "https://defense-in-derpth.herokuapp.com/redline/schedule.json?stop_id=" + stopId;
 	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.overrideMimeType("application/json");
 	xmlhttp.onreadystatechange = function()
 	{
 		if ((this.readyState == 4) && (this.status == 200))
 		{
 			var obj = JSON.parse(this.responseText);
-			console.log(obj); // DELETE THIS LATER!!!!!!!!!!!!!!!!!!!!!
-			for (x in obj.data)
-			{
-				if (obj.data[x].attributes.direction_id == 0)
-				{
-					var direc = "Southbound";
-				}
-				else
-				{
-					var direc = "Northbound";
-				}
-				info += "Arrival time: " + obj.data[x].attributes.arrival_time + ", Departure time: " + obj.data[x].attributes.departure_time + ", " + direc + "<br>";
-			}
-			return info;
+			info = display(obj);
 		}
-		//info = "direc";
 	};
 
 	xmlhttp.open("GET", url, true);
 	xmlhttp.send();
+	return info;
+}
+
+function display(json)
+{
+	var stuff = json;
+	var text = '';
+	for (var i in stuff.data)
+	{
+		var arrival = stuff.data[i].attributes.arrival_time;
+		var depart = stuff.data[i].attributes.departure_time;
+		if (stuff.data[i].attributes.direction_id == 0)
+		{
+			var direc = "Southbound";
+		}
+		else
+		{
+			var direc = "Northbound";
+		}
+		text += 'Arrival time: ' + arrival + ', ' + 'Departure time: ' + depart + ', ' + direc + '</br>';
+	}
+	return text;
 }
