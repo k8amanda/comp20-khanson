@@ -106,11 +106,12 @@ function mark(data, image, map)
             icon: image
         });
         var stop3 = data[i][3];
+        var stationName = data[i][0];
 
         // prevents an infowindow from opening for blue and orange lines
         if (stop3 != null)
         {
-            openWindow(marker, stop3);
+            openWindow(marker, stop3, stationName);
         }
     }
 }
@@ -143,6 +144,7 @@ function find()
 
 function getPosition(position)
 {
+	// user's position, marked and infowindow opened with distance to closest station
 	currPos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 	var marker = new google.maps.Marker({
 	    position: currPos,
@@ -216,39 +218,67 @@ function findDist(you, youLat, youLng, trainStops1, trainStops2)
 	return totalInfo;
 }
 
-function openWindow(marker, stopId)
+function openWindow(marker, stopId, name)
 {
+	// open window at some stop and populate it with schedule and facilities info
 	google.maps.event.addListener(marker, 'click', function()
 	{
-		infowindow.setContent(upcomingTrainsFunc(stopId));
-		infowindow.open(map, marker);
-	});
+		var text = "<div>" + upcomingTrainsFunc(stopId, name) + facilities(stopId, name) + "</div>";
 
+		if (text != "<div>undefinedundefined</div>")
+		{
+			infowindow.setContent(text);
+			infowindow.open(map, marker);
+		}
+	});
 }
 
 var info;
-function upcomingTrainsFunc(stopId)
+function upcomingTrainsFunc(stopId, name)
 {
-	var url = "https://defense-in-derpth.herokuapp.com/redline/schedule.json?stop_id=" + stopId;
+	// get schedule json, parse it and display it in infowindow
+	var url = "https://lit-savannah-60572.herokuapp.com/redline/schedule.json?stop_id=" + stopId;
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function()
 	{
 		if ((this.readyState == 4) && (this.status == 200))
 		{
 			var obj = JSON.parse(this.responseText);
-			info = display(obj);
+			info = display(obj, name);
 		}
 	};
 
 	xmlhttp.open("GET", url, true);
 	xmlhttp.send();
+	
 	return info;
 }
 
-function display(json)
+var info2;
+function facilities(stopId, name)
 {
+	// get facilities json, parse it and display it in infowindow
+	var url2 = "https://api-v3.mbta.com/facilities?filter%5Bstop%5D=" + stopId;
+	var xmlfacilities = new XMLHttpRequest();
+	xmlfacilities.onreadystatechange = function()
+	{
+		if ((this.readyState == 4) && (this.status == 200))
+		{
+			var obj2 = JSON.parse(this.responseText);
+			info2 = displayFacility(obj2, name);
+		}
+	};
+	xmlfacilities.open("GET", url2, true);
+	xmlfacilities.send();
+
+	return info2;
+}
+
+function display(json, thisStation)
+{
+	// display schedule data
 	var stuff = json;
-	var text = '';
+	var text = thisStation + ':' + '</br>';
 	for (var i in stuff.data)
 	{
 		var arrival = stuff.data[i].attributes.arrival_time;
@@ -263,5 +293,29 @@ function display(json)
 		}
 		text += 'Arrival time: ' + arrival + ', ' + 'Departure time: ' + depart + ', ' + direc + '</br>';
 	}
+
 	return text;
+}
+
+function displayFacility(json, thisStation)
+{
+	// display facility data
+	var facilityStuff = json;
+	var escCount = 0;
+	var elCount = 0;
+	var text2 = '</br>';
+	for (var j in facilityStuff.data)
+	{
+		if (facilityStuff.data[j].attributes.type == "ESCALATOR")
+		{
+			escCount += 1;
+		}
+		else if (facilityStuff.data[j].attributes.type == "ELEVATOR")
+		{
+			elCount += 1;
+		}
+	}
+	text2 += 'Number of Elevators: ' + elCount + ', Number of Escalators: ' + escCount;
+
+	return text2;
 }
