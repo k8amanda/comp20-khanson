@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Lab 13</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+	<h1>Security Assessment</h1>
+	<h4>Assessment done by Kate Hanson 7/4/18</h4>
+
+	<h2>Introduction</h2>
+	<p>This assessment checks the security of a Node.js + Express + MongoDB web application developed for Lab 13 of Comp20. This application is intended to take the username, latitude, and longitude of the user, store that information in a database, and based on that data, send you to a homepage. The files that were provided to me were <a href="https://tuftsdev.github.io/WebProgramming/assignments/server-vuln.js">server-vuln.js</a>, code for the app that displays vulnerabilities, and <a href="https://tuftsdev.github.io/WebProgramming/assignments/package.json">package.json</a>. The vulnerabilities exhibited make this application unfit for public use. This assessment exposes three of the problems in the code.</p>
+	<p>A vulnerability can be considered as any action taken that can break this application or dangerously manipulate it.</p>
+	<br>
+
+	<h2>Methodology</h2>
+	<p>The method of testing I used is known as "black box" which means I inputted different types of data to the form using characters not meant to be there. For example, I would put a semicolon in the longitude input and see what errors I could come about myself. I found multiple vulnerabilities with types of code injection, where I would put code into the form and it would be executed as if it were normal.</p>
+	<br>
+
+	<h2>Abstract of Findings</h2>
+	<p>The cause of security issues in this application can be chalked up to the assumption that all users will input correct and harmless information to the form. Unfortunately, not everyone is that nice. The application's code does specify the range of the latitude and longitude input, thereby forcing the input to be numerical. However, putting in numbers that are not valid latitude and longitude coordinates will break the app because the coder did not cover that instance. That is to say, the coder did not write any statement for something, anything to happen if the input was wrong. Aside from simply incorrect input, this application is also very vulnerable to input being made for attacks. In this case, users can put code directly into the form that will cause something to happen whether it be putting your name into the datbase as an image or redirecting you to a hazardous website.</p>
+	<br>
+
+	<h2>Issues Found</h2>
+	<ol>
+		<li>Incomplete Conditional Statement</li>
+		<ul>
+			<li>This issue is simply bad programming practice. It is a result of not covering an edge case.</li>
+			<img src="unresolvedif.png" alt="If Statement" height="100" width="480">
+			<li>The if statement shown above does not have an else statement to account for what would happen if a user entered coordinates outside of these bounds. For example, if one were to input say -233 as their latitude, instead of getting a statement that says "Something is wrong with your data", you would receive the infamous Application Error. You know the one. This error simply means that something is wrong in your code. In this situation, we don't have an else statement to execute some action for if the latitude is smaller than -90 and greater than 90, and if the longitude is smaller than -180 and greater than 180.</li>
+			<img src="apperror.png" alt="Application Error" height="100" width="300">
+			<li>This is a low severity issue since it is easily fixable. All you would have to do is put the same else statement to take you back to the form and try again. You could even change the statement to say "Fix your coordinates!" if you were so inclined.</li>
+			<img src="elsestatement.png" alt="Else Statement" height="38" width="1200">
+		</ul>
+		<br>
+		<li>HTML Injection</li>
+		<ul>
+			<li>This issue allows you to inject HTML tags as your login to the database. All that needs to be done to accomplish this is to open the console, edit the element of the formt that only allows 10 characters to allow as many as you need, and insert whatever code you please.</li>
+			<img src="elem1.png" alt="10 Characters" height="240" width="360">
+			<img src="elem2.png" alt="10000 Characters" height="240" width="360">
+			<li>I changed it to allow 10000 characters and then I inserted the following code in the login box:</li>
+			<img src="alert.png" alt="Alert" height="19" width="180">
+			<li>This resulted in the following alert box to appear when I loaded the homepage:</li>
+			<img src="popup.png" alt="Popup" height="110" width="330">
+			<li>I'd say this is a medium severity issue. It's more of an annoyance than a danger. Another example of implementing this is making my login "name" a picture of rolling dice as shown below.</li>
+			<img src="dice.png" alt="Dice" height="250" width="600">
+			<li>HTML injection can be prevented with a few lines of code, as demonstrated on <a href="https://stackoverflow.com/questions/20855482/preventing-html-and-script-injections-in-javascript">StackOverflow</a>. You can implement code that will prevent a user from typing in characters like < and > that allow them to write potentially harmful code. Another way to avoid the input being taken as code is to convert possible HTML into a string so it just reads as a username instead of anything else.</li>
+		</ul>
+		<br>
+		<li>XSS Injection</li>
+		<ul>
+			<li>This issue is similar to the previous in that you can enter HMTL tags in the form, however in this case, you can use this power to redirect the page to another link. Again, you need to edit the elements to allow more than 10 characters in the form but then you put in the code that will redirect your page. The database will read it like actual code an execute it. For example, if I put the code below in the login, a new tab will open up and take me to a website teaching me <a href="http://strangehorizons.com/non-fiction/articles/installing-linux-on-a-dead-badger-users-notes/">how to install linux on a dead badger</a>.</li>
+			<img src="script.png" alt="Script" height="50" width="600"> <br>
+			<img src="badger.png" alt="Badger" height="300" width="700">
+			<li>This is an issue of high severity. This issue makes the web application very vulnerable to attack. Code can be placed in the login form such that a website will open automatically and could be potentially dangerous, depending on the website you are redirected to. Although it may appear similar to the previous issue, the closest HTML injection comes to XSS is making your username a clickable link to another webpage; you need to take the action and click the link in order for anything to happen. With this issue, the potentially dangerous website opens automatically.</li>
+			<li>A simple way to avoid XSS attacks is to prevent the use of the characters < and >. Without these characters, users will be unable to input their own code to make malicious changes to your application.</li>
+		</ul>
+	</ol>
+	<br>
+
+	<h2>Conclusion</h2>
+	<p>After assessing this web application, it is clear that it is not ready for public use with an easily maniputed form. However, many of the problems found have relatively simple solutions. It is recommended at the very least to fix the issues listed here which will prevent basic attacks. These problems can be fixed quickly and will keep your web application more secure until it is decided to perform a follow-up evaluation to look into possible bigger problems of security.</p>
+</body>
+
+</html>
