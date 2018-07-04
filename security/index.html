@@ -15,11 +15,11 @@
 	<br>
 
 	<h2>Methodology</h2>
-	<p>The method of testing I used is known as "black box" which means I tried attacking the web application without looking over the source code first. I then went on to "white box" testing which means I inputted different types of data to the form using characters not meant to be there according to the source code. For example, I would put a semicolon in the longitude input and see what errors I could come about myself. I found multiple vulnerabilities with types of code injection, where I would put HTML tags into the form and it would be executed as if it were normal code.</p>
+	<p>The method of testing I used is known as "black box" which means I tried attacking the web application without looking over the source code first. I then went on to "white box" testing which means I looked at the source code and input different types of data based on what was unexpected by the application. For example, I would put characters not meant to be there, like a semicolon in the longitude field and see what errors would appear. I found multiple vulnerabilities with types of code injection, where I would put HTML tags into the form and it would be executed as if it were normal and legitimate code.</p>
 	<br>
 
 	<h2>Abstract of Findings</h2>
-	<p>The cause of security issues in this application can be chalked up to the assumption that all users will input correct and harmless information to the form. Unfortunately, not everyone is that nice. The application's code does specify the range of the latitude and longitude input, thereby forcing the input to be numerical. However, putting in numbers that are not valid latitude and longitude coordinates will break the app because the coder did not cover that instance. That is to say, the coder did not write any statement for something, anything to happen if the input was wrong. Aside from simply incorrect input, this application is also very vulnerable to input being made for attacks. In this case, users can put code directly into the form that will cause something to happen whether it be putting your name into the datbase as an image or redirecting you to a hazardous website.</p>
+	<p>The cause of security issues in this application can be chalked up to the assumption that all users will input correct and harmless information to the form. Unfortunately, not everyone is that nice. The application's code does specify the range of the latitude and longitude input, thereby forcing the input to be numerical. However, putting in numbers that are not valid latitude and longitude coordinates will break the app because the coder did not cover that instance. That is to say, the coder did not write a statement for something to happen if the input was invalid. Aside from simply incorrect input, this application is also very vulnerable to input being made for attacks. In this case, users can put code directly into the form and it will cause something to happen whether it be putting your name into the database as an image or redirecting you to a potentially hazardous website.</p>
 	<br>
 
 	<h2>Issues Found</h2>
@@ -36,7 +36,7 @@
 		<br>
 		<li>HTML Injection</li>
 		<ul>
-			<li>This issue allows you to inject HTML tags as your login to the database. All that needs to be done to accomplish this is to open the console, edit the element of the formt that only allows 10 characters to allow as many as you need, and insert whatever code you please.</li>
+			<li>This issue allows you to inject HTML tags as your login to the database. All that needs to be done to accomplish this is to open the console, edit the element of the form and increase the set 10 characters to include as many as you need. Then you can insert whatever code you please into the username field.</li>
 			<img src="elem1.png" alt="10 Characters" height="240" width="360">
 			<img src="elem2.png" alt="10000 Characters" height="240" width="360">
 			<li>I changed it to allow 10000 characters and then I inserted the following code in the login box:</li>
@@ -45,7 +45,7 @@
 			<img src="popup.png" alt="Popup" height="110" width="330">
 			<li>I'd say this is a medium severity issue. It's more of an annoyance than a danger. Another example of implementing this is making my login "name" a picture of rolling dice as shown below.</li>
 			<img src="dice.png" alt="Dice" height="250" width="600">
-			<li>HTML injection can be prevented with a few lines of code, as demonstrated on <a href="https://stackoverflow.com/questions/20855482/preventing-html-and-script-injections-in-javascript">StackOverflow</a>. You can implement code that will prevent a user from typing in characters like < and > that allow them to write potentially harmful code. Another way to avoid the input being taken as code is to convert possible HTML into a string so it just reads as a username instead of anything else.</li>
+			<li>HTML injection can be prevented with a few lines of code. This code can be used to prevent HTML injection in a few different ways. You can implement code that will prevent a user from typing in characters like HTML tag characters < and > that allow them to write potentially harmful code. Another way to avoid the input being taken as code is to convert possible HTML into a string so it just reads as a username instead of anything else.</li>
 		</ul>
 		<br>
 		<li>XSS Injection</li>
